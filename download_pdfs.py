@@ -10,9 +10,7 @@ with open('token.txt') as file:
 base_url = "https://canvas.instructure.com"
 headers = {"Authorization" : "Bearer "+token}
 data = requests.get("{}/api/v1/courses/".format(base_url), headers=headers, params={"per_page" : 100, "enrollment_state":"active"})
-# print(data.text)
 courses = json.loads(data.text)
-# print(courses)
 
 for course in courses:
     loc = os.path.join('downloaded_pdfs', course["course_code"])
@@ -21,8 +19,6 @@ for course in courses:
     endpoint = "/api/v1/courses/{}/files".format(course["id"])
     data = requests.get(base_url + endpoint, headers=headers, params={"per_page" : 100})
     files = json.loads(data.text)
-    #print files
-    #print json.dumps(files, indent=4, sort_keys=True)
     for file in files:
         other_filename, extension = os.path.splitext(file["filename"])
         filename = file["display_name"]
@@ -41,10 +37,3 @@ for course in courses:
         with open(os.path.join(loc, filename),'w+') as f:
             f.write(file_data.read())
         print "Downloaded {} located in {}".format(filename, loc)
-
-
-# endpoint = "/api/v1/courses/17700000000167212/folders"
-# headers = {"Authorization" : "Bearer "+token}
-# data = requests.get(base_url + endpoint, headers=headers)
-# files = json.loads(data.text)
-# print json.dumps(files, indent=4, sort_keys=True)
